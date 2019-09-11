@@ -1,4 +1,4 @@
-/*! cornerstone-wado-image-loader - 2.2.3 - 2019-08-23 | (c) 2016 Chris Hafey | https://github.com/cornerstonejs/cornerstoneWADOImageLoader */
+/*! cornerstone-wado-image-loader - 2.2.3 - 2019-09-11 | (c) 2016 Chris Hafey | https://github.com/cornerstonejs/cornerstoneWADOImageLoader */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "e8dbaa03f6ab4593af9f";
+/******/ 	var hotCurrentHash = "4cccfe327c4775b7475b";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1195,14 +1195,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _convertColorSpace_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./convertColorSpace.js */ "./imageLoader/convertColorSpace.js");
 /* harmony import */ var _shared_getMinMax_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/getMinMax.js */ "./shared/getMinMax.js");
 /* harmony import */ var _isJPEGBaseline8BitColor_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./isJPEGBaseline8BitColor.js */ "./imageLoader/isJPEGBaseline8BitColor.js");
+// const jpeg = require('jpeg-js');
 
 
 
 
 
 
-
-var lastImageIdDrawn = '';
+ // let lastImageIdDrawn = '';
 
 function isModalityLUTForDisplay(sopClassUid) {
   // special case for XA and XRF
@@ -1331,21 +1331,20 @@ function createImage(imageId, pixelData, transferSyntax, options) {
       } else {
         image.getPixelData = function () {
           return imageFrame.pixelData;
-        };
+        }; // image.getPixelData = () => jpeg.decode(pixelData, true).data;
+
       }
 
       if (image.color) {
-        image.getCanvas = function () {
-          if (lastImageIdDrawn === imageId) {
-            return canvas;
-          }
-
-          canvas.height = image.rows;
-          canvas.width = image.columns;
-          var context = canvas.getContext('2d');
-          context.putImageData(imageFrame.imageData, 0, 0);
-          lastImageIdDrawn = imageId;
-          return canvas;
+        image.getCanvas = function () {// if (lastImageIdDrawn === imageId) {
+          //   return canvas;
+          // }
+          // canvas.height = image.rows;
+          // canvas.width = image.columns;
+          // const context = canvas.getContext('2d');
+          // context.putImageData(imageFrame.imageData, 0, 0);
+          // lastImageIdDrawn = imageId;
+          // return canvas;
         };
       } // Modality LUT
 
@@ -1370,8 +1369,10 @@ function createImage(imageId, pixelData, transferSyntax, options) {
         var minVoi = image.minPixelValue * image.slope + image.intercept;
         image.windowWidth = maxVoi - minVoi;
         image.windowCenter = (maxVoi + minVoi) / 2;
-      }
+      } // imageFrame = null;
 
+
+      canvas = null;
       resolve(image);
     }, reject);
   });
