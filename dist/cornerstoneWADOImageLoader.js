@@ -1,4 +1,4 @@
-/*! cornerstone-wado-image-loader - 2.2.3 - 2019-09-11 | (c) 2016 Chris Hafey | https://github.com/cornerstonejs/cornerstoneWADOImageLoader */
+/*! cornerstone-wado-image-loader - 2.2.3 - 2020-01-06 | (c) 2016 Chris Hafey | https://github.com/cornerstonejs/cornerstoneWADOImageLoader */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "4cccfe327c4775b7475b";
+/******/ 	var hotCurrentHash = "2bac1a92b63e32a09639";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1192,17 +1192,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _getImageFrame_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getImageFrame.js */ "./imageLoader/getImageFrame.js");
 /* harmony import */ var _decodeImageFrame_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./decodeImageFrame.js */ "./imageLoader/decodeImageFrame.js");
 /* harmony import */ var _isColorImage_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isColorImage.js */ "./imageLoader/isColorImage.js");
-/* harmony import */ var _convertColorSpace_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./convertColorSpace.js */ "./imageLoader/convertColorSpace.js");
-/* harmony import */ var _shared_getMinMax_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/getMinMax.js */ "./shared/getMinMax.js");
-/* harmony import */ var _isJPEGBaseline8BitColor_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./isJPEGBaseline8BitColor.js */ "./imageLoader/isJPEGBaseline8BitColor.js");
+/* harmony import */ var _shared_getMinMax_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/getMinMax.js */ "./shared/getMinMax.js");
 // const jpeg = require('jpeg-js');
 
 
 
+ // import convertColorSpace from './convertColorSpace.js';
 
-
-
- // let lastImageIdDrawn = '';
+ // import isJPEGBaseline8BitColor from './isJPEGBaseline8BitColor.js';
+// let lastImageIdDrawn = '';
 
 function isModalityLUTForDisplay(sopClassUid) {
   // special case for XA and XRF
@@ -1212,7 +1210,7 @@ function isModalityLUTForDisplay(sopClassUid) {
 }
 
 function convertToIntPixelData(floatPixelData) {
-  var floatMinMax = Object(_shared_getMinMax_js__WEBPACK_IMPORTED_MODULE_5__["default"])(floatPixelData);
+  var floatMinMax = Object(_shared_getMinMax_js__WEBPACK_IMPORTED_MODULE_4__["default"])(floatPixelData);
   var floatRange = Math.abs(floatMinMax.max - floatMinMax.min);
   var intRange = 65535;
   var slope = floatRange / intRange;
@@ -1275,25 +1273,24 @@ function createImage(imageId, pixelData, transferSyntax, options) {
       var sopCommonModule = cornerstone.metaData.get('sopCommonModule', imageId) || {};
       var isColorImage = Object(_isColorImage_js__WEBPACK_IMPORTED_MODULE_3__["default"])(imageFrame.photometricInterpretation); // JPEGBaseline (8 bits) is already returning the pixel data in the right format (rgba)
       // because it's using a canvas to load and decode images.
-
-      if (!Object(_isJPEGBaseline8BitColor_js__WEBPACK_IMPORTED_MODULE_6__["default"])(imageFrame, transferSyntax)) {
-        setPixelDataType(imageFrame); // convert color space
-
-        if (isColorImage) {
-          // setup the canvas context
-          canvas.height = imageFrame.rows;
-          canvas.width = imageFrame.columns;
-          var context = canvas.getContext('2d');
-          var imageData = context.createImageData(imageFrame.columns, imageFrame.rows);
-          Object(_convertColorSpace_js__WEBPACK_IMPORTED_MODULE_4__["default"])(imageFrame, imageData);
-          imageFrame.imageData = imageData;
-          imageFrame.pixelData = imageData.data; // calculate smallest and largest PixelValue of the converted pixelData
-
-          var minMax = Object(_shared_getMinMax_js__WEBPACK_IMPORTED_MODULE_5__["default"])(imageFrame.pixelData);
-          imageFrame.smallestPixelValue = minMax.min;
-          imageFrame.largestPixelValue = minMax.max;
-        }
-      }
+      // if (!isJPEGBaseline8BitColor(imageFrame, transferSyntax)) {
+      //   setPixelDataType(imageFrame);
+      //   // convert color space
+      //   if (isColorImage) {
+      //     // setup the canvas context
+      //     canvas.height = imageFrame.rows;
+      //     canvas.width = imageFrame.columns;
+      //     const context = canvas.getContext('2d');
+      //     const imageData = context.createImageData(imageFrame.columns, imageFrame.rows);
+      //     convertColorSpace(imageFrame, imageData);
+      //     imageFrame.imageData = imageData;
+      //     imageFrame.pixelData = imageData.data;
+      //     // calculate smallest and largest PixelValue of the converted pixelData
+      //     const minMax = getMinMax(imageFrame.pixelData);
+      //     imageFrame.smallestPixelValue = minMax.min;
+      //     imageFrame.largestPixelValue = minMax.max;
+      //   }
+      // }
 
       var image = {
         imageId: imageId,
@@ -1465,11 +1462,11 @@ function decodeImageFrame(imageFrame, transferSyntax, pixelData, canvas) {
     // JPEG Baseline lossy process 1 (8 bit)
     // Handle 8-bit JPEG Baseline color images using the browser's built-in
     // JPEG decoding
-    if (imageFrame.bitsAllocated === 8 && (imageFrame.samplesPerPixel === 3 || imageFrame.samplesPerPixel === 4)) {
-      return Object(_decodeJPEGBaseline8BitColor_js__WEBPACK_IMPORTED_MODULE_2__["default"])(imageFrame, pixelData, canvas);
-    }
-
-    return processDecodeTask(imageFrame, transferSyntax, pixelData, options);
+    return Object(_decodeJPEGBaseline8BitColor_js__WEBPACK_IMPORTED_MODULE_2__["default"])(imageFrame, pixelData, canvas); // if (imageFrame.bitsAllocated === 8 &&
+    //    (imageFrame.samplesPerPixel === 3 || imageFrame.samplesPerPixel === 4)) {
+    //   return decodeJPEGBaseline8BitColor(imageFrame, pixelData, canvas);
+    // }
+    // return processDecodeTask(imageFrame, transferSyntax, pixelData, options);
   } else if (transferSyntax === '1.2.840.10008.1.2.4.51') {
     // JPEG Baseline lossy process 2 & 4 (12 bit)
     return processDecodeTask(imageFrame, transferSyntax, pixelData, options);
@@ -1953,7 +1950,7 @@ function xhrRequest(url, imageId) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (photoMetricInterpretation) {
-  return photoMetricInterpretation === 'RGB' || photoMetricInterpretation === 'PALETTE COLOR' || photoMetricInterpretation === 'YBR_FULL' || photoMetricInterpretation === 'YBR_FULL_422' || photoMetricInterpretation === 'YBR_PARTIAL_422' || photoMetricInterpretation === 'YBR_PARTIAL_420' || photoMetricInterpretation === 'YBR_RCT' || photoMetricInterpretation === 'YBR_ICT';
+  return photoMetricInterpretation === 'RGB' || photoMetricInterpretation === 'PALETTE COLOR' || photoMetricInterpretation === 'YBR_FULL' || photoMetricInterpretation === 'YBR_FULL_422' || photoMetricInterpretation === 'YBR_PARTIAL_422' || photoMetricInterpretation === 'YBR_PARTIAL_420' || photoMetricInterpretation === 'YBR_RCT' || photoMetricInterpretation === 'YBR_ICT' || photoMetricInterpretation === 'MONOCHROME2';
 });
 
 /***/ }),
